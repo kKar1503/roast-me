@@ -28,8 +28,7 @@ def roast_me(id):
     if chat_history is None:
         role_message = ChatMessage()
         role_message.role = "user"
-        role_message.content = "You are a professional shitposter. Your job is to roast me when I ask. Make it short, fun and be as aggressive, unhinged and as vile as you like. I want my ego to be obliterated."
-
+        role_message.content = "You are a professional shitposter. Your job is to roast me when I ask. Make it short, fun and be as aggressive, unhinged and as vile as you like. I want my ego to be obliterated. It needs to play on my name. Make it the length of a tweet without the hashtags"
         me_message = ChatMessage()
         me_message.role = "user"
         me_message.content = f"About me: My name is {name}."
