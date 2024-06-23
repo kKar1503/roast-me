@@ -17,6 +17,7 @@ export default function Home() {
   const [threadID, setThreadID] = React.useState<string>("");
   const [name, setName] = React.useState<string>("");
   const [leftRight, setLeftRight] = React.useState(false);
+  const [faceID, setFaceID] = React.useState(1);
 
   const { data, refetch, isLoading, isRefetching } = useQuery<RoastData>({
     queryKey: ["roast"],
@@ -43,11 +44,6 @@ export default function Home() {
     setName(nameFromQuery);
   }, [router]);
 
-  React.useEffect(() => {
-    console.log(threadID);
-    console.log(name);
-  }, [threadID, name]);
-
   return (
     <>
       <Head>
@@ -57,11 +53,11 @@ export default function Home() {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] pb-8">
         <EmojiRain
-          emojis={["🤡", "🤡", "🤡", "🤡", "🤡", "🤡", "🤡", "🤡", "🤡", "🤡"]}
+          emojis={["🤡", "🦧", "🤡", "🤣", "💩", "🦧", "🤯", "💩", "🤣", "🤡"]}
         />
         {leftRight ? (
           <div className="container flex flex-row items-center justify-center gap-12 px-4 py-16 ">
-            <Image src={"/face1.png"} width={400} height={600} alt="" />
+            <Image src={`/face${faceID}.png`} width={400} height={600} alt="" />
             <div className="speech-bubble relative rounded-lg border-2 p-6 text-4xl text-gray-400">
               {isLoading || isRefetching
                 ? "I'm thinking how to roast you..."
@@ -77,7 +73,7 @@ export default function Home() {
             </div>
             <Image
               className="scale-x-[-1]"
-              src={"/face1.png"}
+              src={`/face${faceID}.png`}
               width={400}
               height={600}
               alt=""
@@ -88,8 +84,8 @@ export default function Home() {
           className="bg-transparent p-9 text-center text-3xl text-gray-400 hover:bg-gray-700 hover:bg-opacity-35 hover:text-gray-400"
           variant={"outline"}
           onClick={() => {
-            console.log("refetch");
             setLeftRight((prev) => !prev);
+            setFaceID(Math.floor(Math.random() * 7 + 1));
             refetch();
           }}
         >
