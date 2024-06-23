@@ -18,16 +18,16 @@ export default function Home() {
   const [name, setName] = React.useState<string>("");
   const [leftRight, setLeftRight] = React.useState(false);
 
-  const { data, refetch, isFetching } = useQuery<RoastData>({
-    queryKey: ["roast", name.current],
-    queryFn: async () => {
-      const res = await axios
+  const { data, refetch, isLoading, isRefetching } = useQuery<RoastData>({
+    queryKey: ["roast"],
+    queryFn: () => {
+      return axios
         .get<RoastData>(
           `${env.NEXT_PUBLIC_BACKEND_URL}/roast/${threadID}?name=${name}`,
         )
         .then((res) => res.data);
-      console.log(res.roast);
-      return res;
+      // console.log(res.roast);
+      // return res;
     },
     enabled: threadID !== "" && name !== "",
     refetchOnWindowFocus: false,
@@ -36,6 +36,8 @@ export default function Home() {
   React.useEffect(() => {
     const nameFromQuery = router.query.name as string;
     const idFromQuery = router.query.id as string;
+    if (nameFromQuery === undefined) return;
+    if (idFromQuery === undefined) return;
 
     setThreadID(idFromQuery);
     setName(nameFromQuery);
@@ -60,16 +62,18 @@ export default function Home() {
         {leftRight ? (
           <div className="container flex flex-row items-center justify-center gap-12 px-4 py-16 ">
             <Image src={"/face1.png"} width={400} height={600} alt="" />
-            <div className="speech-bubble relative rounded-lg border-2 p-6 text-8xl text-gray-400">
-              {isFetching ? "..." : data?.roast || `${name}, you are smelly`}
+            <div className="speech-bubble relative rounded-lg border-2 p-6 text-4xl text-gray-400">
+              {isLoading || isRefetching
+                ? "I'm thinking how to roast you..."
+                : data?.roast ?? `${name}, you are smelly`}
             </div>
           </div>
         ) : (
           <div className="container flex flex-row items-center justify-center gap-12 px-4 py-16 ">
-            <div className="speech-bubble relative rounded-lg border-2 p-6 text-8xl text-gray-400">
-              <p>
-                {isFetching ? "..." : data?.roast || `${name}, you are smelly`}
-              </p>
+            <div className="speech-bubble relative rounded-lg border-2 p-6 text-4xl text-gray-400">
+              {isLoading || isRefetching
+                ? "I'm thinking how to roast you..."
+                : data?.roast ?? `${name}, you are smelly`}
             </div>
             <Image
               className="scale-x-[-1]"
