@@ -21,14 +21,16 @@ export default function Home() {
   const name = React.useRef<string>("");
   const [leftRight, setLeftRight] = React.useState(false);
 
-  const { data, refetch } = useQuery<RoastData>({
-    queryKey: ["roast"],
-    queryFn: () => {
-      return axios
+  const { data, isLoading, refetch } = useQuery<RoastData>({
+    queryKey: ["roast", name.current],
+    queryFn: async () => {
+      const res = await axios
         .get<RoastData>(
           `${env.NEXT_PUBLIC_BACKEND_URL}/roast/${threadID.current}?name=${name.current}`,
         )
         .then((res) => res.data);
+      console.log(res.roast);
+      return res;
     },
   });
 
@@ -55,13 +57,13 @@ export default function Home() {
           <div className="container flex flex-row items-center justify-center gap-12 px-4 py-16 ">
             <Image src={"/face1.png"} width={400} height={600} alt="" />
             <div className="speech-bubble relative rounded-lg border-2 p-6 text-8xl text-gray-400">
-              {data?.roast || "You are smelly"}
+              {isLoading ? "..." : data?.roast || "You are smelly"}
             </div>
           </div>
         ) : (
           <div className="container flex flex-row items-center justify-center gap-12 px-4 py-16 ">
             <div className="speech-bubble relative rounded-lg border-2 p-6 text-8xl text-gray-400">
-              {data?.roast || "You are smelly"}
+              {isLoading ? "..." : data?.roast || "You are smelly"}
             </div>
             <Image
               className="scale-x-[-1]"

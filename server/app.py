@@ -1,6 +1,10 @@
 import ollama
 from flask import Flask, request
 from typing import Dict, List, Literal, Union
+from flask_cors import CORS, cross_origin
+app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 app = Flask(__name__)
 
@@ -15,6 +19,7 @@ class ChatMessage:
 chats: Dict[str, List[ChatMessage]] = {}
 
 @app.get('/roast/<id>')
+@cross_origin()
 def roast_me(id):
     # Obtain the name parameter from the request
     name = request.args.get('name', '')
