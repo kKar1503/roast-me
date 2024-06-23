@@ -1,9 +1,6 @@
 import React from "react";
 import Head from "next/head";
-import Link from "next/link";
 import EmojiRain from "@/components/emoji/EmojiRain";
-import { Input } from "@/components/ui/input";
-import { useDebounceCallback, useTimeout } from "usehooks-ts";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
@@ -17,8 +14,8 @@ interface RoastData {
 
 export default function Home() {
   const router = useRouter();
-  const threadID = React.useRef<string>("");
-  const name = React.useRef<string>("");
+  const [threadID, setThreadID] = React.useState<string>("");
+  const [name, setName] = React.useState<string>("");
   const [leftRight, setLeftRight] = React.useState(false);
 
   const { data, refetch } = useQuery<RoastData>({
@@ -26,19 +23,25 @@ export default function Home() {
     queryFn: () => {
       return axios
         .get<RoastData>(
-          `${env.NEXT_PUBLIC_BACKEND_URL}/roast/${threadID.current}?name=${name.current}`,
+          `${env.NEXT_PUBLIC_BACKEND_URL}/roast/${threadID}?name=${name}`,
         )
         .then((res) => res.data);
     },
+    enabled: threadID !== "" && name !== "",
   });
 
   React.useEffect(() => {
-    const nameFromQuery = router.query["name"] as string;
-    const idFromQuery = router.query["id"] as string;
+    const nameFromQuery = router.query.name as string;
+    const idFromQuery = router.query.id as string;
 
-    threadID.current = idFromQuery;
-    name.current = nameFromQuery;
-  }, []);
+    setThreadID(idFromQuery);
+    setName(nameFromQuery);
+  }, [router]);
+
+  React.useEffect(() => {
+    console.log(threadID);
+    console.log(name);
+  }, [threadID, name]);
 
   return (
     <>
@@ -55,13 +58,13 @@ export default function Home() {
           <div className="container flex flex-row items-center justify-center gap-12 px-4 py-16 ">
             <Image src={"/face1.png"} width={400} height={600} alt="" />
             <div className="speech-bubble relative rounded-lg border-2 p-6 text-8xl text-gray-400">
-              {data?.roast || "You are smelly"}
+              {data?.roast ?? `${name}, you are smelly`}
             </div>
           </div>
         ) : (
           <div className="container flex flex-row items-center justify-center gap-12 px-4 py-16 ">
             <div className="speech-bubble relative rounded-lg border-2 p-6 text-8xl text-gray-400">
-              {data?.roast || "You are smelly"}
+              {data?.roast ?? `${name}, you are smelly`}
             </div>
             <Image
               className="scale-x-[-1]"
@@ -76,9 +79,9 @@ export default function Home() {
           className="bg-transparent p-9 text-center text-3xl text-gray-400 hover:bg-gray-700 hover:bg-opacity-35 hover:text-gray-400"
           variant={"outline"}
           onClick={() => {
-            refetch();
-            setLeftRight((prev) => !prev);
             console.log("refetch");
+            setLeftRight((prev) => !prev);
+            refetch();
           }}
         >
           Roast Me Again
