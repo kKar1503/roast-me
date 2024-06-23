@@ -83,6 +83,7 @@ export default function Home() {
         <Button
           className="bg-transparent p-9 text-center text-3xl text-gray-400 hover:bg-gray-700 hover:bg-opacity-35 hover:text-gray-400"
           variant={"outline"}
+          disabled={isRefetching || isLoading}
           onClick={() => {
             setLeftRight((prev) => !prev);
             setFaceID(Math.floor(Math.random() * 7 + 1));
